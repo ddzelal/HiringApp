@@ -1,3 +1,4 @@
+import { validateLoginData, validateUserData } from './../utils/validations';
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../middleware/error.middleware';
 import { Users } from '../models/User';
@@ -11,11 +12,12 @@ export const loginUser = async (
   next: NextFunction
 ) => {
   try {
-    const email = req.body?.email;
-    const password = req.body?.password;
-    if (!password || !email) {
+    const valid: any = validateLoginData(req.body);
+    if (valid?.error) {
       throw new AppError(400, 'Email or password is incorrect');
     }
+    const email = req.body.email;
+    const password = req.body.password;
 
     const user = await Users.findOne({
       email,
@@ -56,12 +58,14 @@ export const registerUser = async (
   next: NextFunction
 ) => {
   try {
-    const email = req.body?.email;
-    const password = req.body?.password;
-    const name = req.body?.name;
-    if (!name || !password || !email) {
-      throw new AppError(400, 'User provided invalid details');
-    }
+    const valid = validateUserData(req.body);
+    console.log(valid);
+
+    // if (valid.error) {
+    //   throw new AppError(400, 'User provided invalid details');
+    // }
+
+    const { email, password, name } = req.body;
     const user = await Users.findOne({
       email: email,
     });

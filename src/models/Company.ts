@@ -8,7 +8,6 @@ const locationSchema = new Schema<ILocation>({
   },
   city: {
     type: String,
-    required: true,
   },
 });
 
